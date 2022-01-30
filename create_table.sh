@@ -1,5 +1,6 @@
 #!/bin/bash
 source ./connectdb.sh
+source ./desgin.sh
 # db_name="`cat tmp`"
 
 ## Function to read pk from user 
@@ -10,26 +11,24 @@ pk_column () {
 
        if [[ $col_name =~  ^[a-zA-Z]+[a-zA-Z0-9]*$ ]] 
        then
-          read -p "Enter 1-to number 2-to string : " type_
-            if [[ $type_ == '1' ]]
-            then
-           
-              echo $counter":""number"":"$col_name":pk" >> ./databases/$db_name/$table_name/$table_name".metadata"
-            elif [[ $type_ == '2' ]]
-            then
-         
-              echo $counter":""string"":"$col_name":pk" >> ./databases/$db_name/$table_name/$table_name".metadata"
-            else 
-              echo "invalid choice"
-              pk_column
-            fi
+                        select choice in " Press 1 for DataType Number : " " Press 2 for DataType String : "
+                        do
+                            case $REPLY in
+                            1) echo $counter":""number"":"$col_name":pk" >> ./databases/$db_name/$table_name/$table_name".metadata"
+                            break 1 ;;
+                            2) echo $counter":""string"":"$col_name":pk" >> ./databases/$db_name/$table_name/$table_name".metadata"
+                            break 1 ;;
+                            *) echo $REPLY "is not one of the choices."
+                            ;;
+                            esac
+                        done
        else 
-         echo "pk invalid "
-        
+         echo -e "\n\t${YELLOW}Enter Correct Format${NC}\n"
+        pk_column
         fi
  
    else 
-     echo "pk cannot be a null"
+     echo -e "\n\t${YELLOW}pk cannot be a null${NC}\n"
      pk_column
     fi
     
@@ -94,16 +93,16 @@ then
                             esac
                         done
                 else 
-                echo "Column Name repeated"
+                echo -e "\n\t${RED}Column Name repeated${NC}\n"
                 fi    
         else 
-        echo "Plsease Enter Valid Name"
+        echo -e "\n\t${YELLOW}Please Enter Valid Name${NC}\n"
         continue
         fi
 
     done
 else 
-echo " Enter Valid Number"
+echo -e "\n\t${YELLOW}Enter Valid Number${NC}\n"
 create_column
 
 fi
@@ -114,7 +113,7 @@ fi
 
 
 create_table () {
-    clear
+    
     read -p "Enter Your Table Name : " table_name
     if [[ $table_name =~  ^[a-zA-Z]+[a-zA-Z0-9]*$ ]] && [[ ! $table_name == '' ]]
     then
@@ -124,19 +123,37 @@ create_table () {
         touch ./databases/$db_name/$table_name/$table_name".data"
         touch ./databases/$db_name/$table_name/$table_name".metadata"
         create_column 
-        echo "Table Created Successfully "
-        echo $db_name > "tmp"
+        clear
+        echo -e "\n\n\t${YELLOW}Creating .... ${NC}"
+        sleep 3
+        clear
+        echo -e "\n\t${GREEN}Table Created Successfully${NC}\n"
+        
+            echo -e "*================ ${BLUE}Do you want to Create more tables  ${NC}==============*\n"
+                  select type in 'Yes' 'No'
+                  do
+                      case $REPLY in 
+                          1)
+                              create_table
+                              ;;
+                          2)   
+                            clear
+                              break ;; 
+                          *) echo -e "*====\n\t${YELLOW}please enter right choice${NC}\n====*";
+                          
+                      esac
+                  done
         ./tables_options.sh
         else 
-        echo "Table Already Exists "
-        echo "Please Try again "
+        echo -e "\n\t*========${RED}Table Already Exists${NC}========*"
+        echo -e "\t*========${RED}Please Try again${NC}========*\n"
         create_table
         fi
     else
-      echo "Invalid Name For Table"
+      echo -e "\n*========${RED}Invalid Name For Table${NC}========*\n"
       create_table
-
 fi
+        echo $db_name > "tmp"
 }
 
 

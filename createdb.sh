@@ -5,21 +5,42 @@ createdb(){
     then
     mkdir ./databases
     fi
-    RED='\033[0;31m'
-    NC='\033[0m'
     echo -e "=========================================="
-    echo -e "#           ${RED}create Database${NC}              #"
+    echo -e "#           ${BLUE}create Database${NC}              #"
     echo -e "=========================================="
+while [[ true ]]
+do
     read -p "Enter database name : " dbName
+        if [ "$dbName" == '' ]
+        then
+            echo -e "*======${RED}Please Enter Valid Data${NC}======*"
+        
+        elif [ -d ./databases/$dbName ]
+        then
+            echo -e "*======${RED}Table already Exist${NC}======*"
+        else
+            mkdir ./databases/$dbName
+            echo ""
+            echo  -e "\t${GREEN}Database  $dbName succesfully created${NC}"
+            echo ""
+            sleep 1
+            clear
+            break
+        fi
+done
+echo -e "*=========${CYAN}Do You Need To Create More DataBases${NC}==========*"
 
-    if [ -d ./databases/$dbName ]
-    then
-        echo -e " ${RED}XXXXX--${NC}  database already exist ${RED}--XXXXX${NC}"
-    else
-        mkdir ./databases/$dbName
-        echo  -e "Database  $dbName succesfully created"
-    fi
-
-source ./main.sh
+     select type in 'Yes' 'No'
+     do 
+        case $REPLY in
+           
+           1) createdb
+            ;;   
+            
+           2) ./main.sh
+            ;;
+       
+    esac
+    done
 }
 
